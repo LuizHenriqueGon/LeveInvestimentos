@@ -1,14 +1,18 @@
+using Microsoft.EntityFrameworkCore;
 using LeveInvestimentos.Core.Entities;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LeveInvestimentos.Infrastructure.Data
 {
     public static class DataSeeder
     {
-        public static void Seed(ApplicationDbContext context)
+        public static async Task SeedAsync(ApplicationDbContext context)
         {
-            context.Database.EnsureCreated();
+            await context.Database.EnsureCreatedAsync();
 
-            if (!context.Usuarios.Any(u => u.Email == "ti@leveinvestimentos.com.br"))
+            if (!await context.Usuarios.AnyAsync(u => u.Email == "ti@leveinvestimentos.com.br"))
             {
                 var usuarioTI = new Usuario
                 {
@@ -19,12 +23,12 @@ namespace LeveInvestimentos.Infrastructure.Data
                     Email = "ti@leveinvestimentos.com.br",
                     Endereco = "Praça Maastricht, nº 200",
                     FotoUsuario = "default-avatar.png",
-                    Senha = "teste123",
-                    IsGestor = true 
+                    Senha = "teste123", 
+                    IsGestor = true     
                 };
 
-                context.Usuarios.Add(usuarioTI);
-                context.SaveChanges();
+                await context.Usuarios.AddAsync(usuarioTI);
+                await context.SaveChangesAsync();
             }
         }
     }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using LeveInvestimentos.Infrastructure.Data;
 using LeveInvestimentos.Core.Interfaces;
+using LeveInvestimentos.Infrastructure.Data;
 using LeveInvestimentos.Infrastructure.Repositories;
 using LeveInvestimentos.Application.Services;
 
@@ -13,19 +13,38 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.Name = "LeveInvestimentosAuth";
-        options.LoginPath = "/Login/Index";
-        options.AccessDeniedPath = "/Home/AcessoNegado";
+        options.LoginPath = "/Login"; 
+        options.AccessDeniedPath = "/Home/Privacy"; 
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
 
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ITarefaRepository, TarefaRepository>();
+
 builder.Services.AddScoped<TarefaService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        
+        await context.Database.MigrateAsync();
+        
+        await DataSeeder.SeedAsync(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocorreu um erro crítico ao inicializar ou popular o banco de dados.");
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -34,21 +53,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(); 
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    if (app.Environment.IsDevelopment())
-    {
-        context.Database.EnsureCreated(); 
-        DataSeeder.Seed(context);
-    }
-}
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.Run();

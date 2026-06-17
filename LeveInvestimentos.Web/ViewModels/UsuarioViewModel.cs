@@ -29,7 +29,6 @@ namespace LeveInvestimentos.Web.ViewModels
 
         public bool IsGestor { get; set; }
 
-        // Propriedade que recebe o arquivo do botão de upload
         public IFormFile? FotoArquivo { get; set; }
     }
 }

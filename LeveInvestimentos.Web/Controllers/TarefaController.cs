@@ -25,14 +25,12 @@ namespace LeveInvestimentos.Web.Controllers
             _tarefaService = tarefaService;
         }
 
-        // TELA DE LISTAGEM
         [HttpGet]
         public async Task<IActionResult> Listar() 
         {
             return View(await _tarefaRepository.GetAllAsync());
         }
 
-        // TELA DE AGENDAR
         [HttpGet]
         public async Task<IActionResult> Agendar()
         {
@@ -42,7 +40,6 @@ namespace LeveInvestimentos.Web.Controllers
             return View();
         }
 
-        // AÇÃO DE SALVAR NOVA TAREFA
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Agendar(TarefaViewModel model)
@@ -81,7 +78,6 @@ namespace LeveInvestimentos.Web.Controllers
             return View(model);
         }
 
-        // TELA DE EDITAR TAREFA
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
         {
@@ -94,7 +90,6 @@ namespace LeveInvestimentos.Web.Controllers
             return View(tarefa);
         }
 
-        // AÇÃO DE SALVAR A EDIÇÃO NO BANCO
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(int id, Tarefa tarefaAtualizada)
@@ -106,7 +101,6 @@ namespace LeveInvestimentos.Web.Controllers
             var tarefaNoBanco = await _tarefaRepository.GetByIdAsync(id);
             if (tarefaNoBanco == null) return NotFound();
 
-            // Atualiza os dados permitidos
             tarefaNoBanco.MensagemDescritiva = tarefaAtualizada.MensagemDescritiva;
             tarefaNoBanco.DataLimite = tarefaAtualizada.DataLimite;
             tarefaNoBanco.SubordinadoId = tarefaAtualizada.SubordinadoId;
@@ -118,7 +112,6 @@ namespace LeveInvestimentos.Web.Controllers
             return RedirectToAction("Listar");
         }
 
-        // AÇÃO DE DELETAR TAREFA
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deletar(int id)

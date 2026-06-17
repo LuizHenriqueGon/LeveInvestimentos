@@ -20,7 +20,6 @@ namespace LeveInvestimentos.Infrastructure.Repositories
         public async Task AddAsync(Tarefa tarefa) 
             => await _context.Tarefas.AddAsync(tarefa);
 
-        // --- IMPLEMENTAÇÃO DOS NOVOS MÉTODOS ---
         public async Task<Tarefa?> GetByIdAsync(int id) 
             => await _context.Tarefas.Include(t => t.Subordinado).FirstOrDefaultAsync(t => t.Id == id);
 
@@ -29,7 +28,6 @@ namespace LeveInvestimentos.Infrastructure.Repositories
 
         public void Delete(Tarefa tarefa) 
             => _context.Tarefas.Remove(tarefa);
-        // ---------------------------------------
 
         public async Task<bool> SaveChangesAsync() 
             => await _context.SaveChangesAsync() > 0;
