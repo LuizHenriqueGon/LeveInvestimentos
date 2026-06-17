@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Leve Investimentos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/css/uikit.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="uk-navbar-container uk-margin" uk-navbar>
+            <div class="uk-navbar-left">
+                <a class="uk-navbar-item uk-logo" href="/">Leve Investimentos</a>
+                <ul class="uk-navbar-nav">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li><a asp-controller="Tarefa" asp-action="Listar">TAREFAS</a></li>
+                        
+                        @if (User.FindFirst("IsGestor")?.Value == "True")
+                        {
+                            <li><a asp-controller="Tarefa" asp-action="Agendar">AGENDAR TAREFA</a></li>
+                            
+                            <li><a asp-controller="Usuario" asp-action="Cadastrar">NOVO USUÁRIO</a></li>
+
+                            <li><a asp-controller="Usuario" asp-action="Listar">LISTA DE USUÁRIOS</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li>
+                            <a href="#">OLÁ, @User.Identity?.Name?.ToUpper()</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li><a asp-controller="Login" asp-action="Logout">Sair do Sistema</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="uk-container">
+        @RenderBody()
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

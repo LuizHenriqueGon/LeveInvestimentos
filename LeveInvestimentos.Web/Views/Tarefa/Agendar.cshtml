@@ -1,0 +1,59 @@
+@model LeveInvestimentos.Web.ViewModels.TarefaViewModel
+
+@{
+    ViewData["Title"] = "Agendar Tarefa";
+}
+
+<div class="uk-container uk-margin-top uk-animation-slide-bottom-small">
+    <div class="uk-card uk-card-default uk-card-body uk-box-shadow-large">
+        <h2 class="uk-card-title uk-heading-divider">Agendar Nova Tarefa</h2>
+
+        <form asp-action="Agendar" method="post" class="uk-form-stacked">
+            @Html.AntiForgeryToken()
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="uk-alert-danger" uk-alert>
+                    <a class="uk-alert-close" uk-close></a>
+                    @Html.ValidationSummary(false, "", new { @class = "uk-list uk-margin-remove" })
+                </div>
+            }
+
+            <div class="uk-margin">
+                <label class="uk-form-label uk-text-bold">Mensagem Descritiva</label>
+                <div class="uk-form-controls">
+                    <textarea asp-for="MensagemDescritiva" class="uk-textarea uk-border-rounded" rows="4" placeholder="Insira detalhadamente as instruções da atividade..." required></textarea>
+                </div>
+            </div>
+
+            <div class="uk-grid-small uk-child-width-1-2@s" uk-grid>
+                <div>
+                    <label class="uk-form-label uk-text-bold">Data Limite de Execução</label>
+                    <div class="uk-form-controls">
+                        <input asp-for="DataLimite" type="datetime-local" class="uk-input uk-border-rounded" required />
+                    </div>
+                </div>
+                <div>
+                    <label class="uk-form-label uk-text-bold">Colaborador Responsável</label>
+                    <div class="uk-form-controls">
+                        <select asp-for="SubordinadoId" class="uk-select uk-border-rounded" required>
+                            <option value="">Selecione o subordinado...</option>
+                            @if (ViewBag.Subordinados != null)
+                            {
+                                foreach (var sub in ViewBag.Subordinados)
+                                {
+                                    <option value="@sub.Id">@sub.NomeCompleto (@(sub.IsGestor ? "Gestor" : "Subordinado"))</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-margin-medium-top">
+                <button type="submit" class="uk-button uk-button-primary uk-border-rounded">Confirmar Agendamento</button>
+                <a asp-action="Listar" class="uk-button uk-button-default uk-border-rounded">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

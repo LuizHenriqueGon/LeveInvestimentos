@@ -1,0 +1,72 @@
+@model IEnumerable<LeveInvestimentos.Core.Entities.Usuario>
+
+@{
+    ViewData["Title"] = "Usuários Cadastrados";
+}
+
+<div class="uk-container uk-margin-top uk-animation-fade">
+    <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
+        <div>
+            <h2 class="uk-heading-bullet">Diretório de Usuários</h2>
+            <p class="uk-text-muted uk-margin-remove-top">Lista de colaboradores ativos no sistema e seus níveis de acesso administrativos.</p>
+        </div>
+        @if (User.FindFirst("IsGestor")?.Value == "True")
+        {
+            <a asp-action="Cadastrar" class="uk-button uk-button-secondary uk-box-shadow-small uk-border-rounded">
+                <span uk-icon="icon: plus"></span> Novo Usuário
+            </a>
+        }
+    </div>
+
+    <div class="uk-card uk-card-default uk-card-body uk-padding-remove uk-overflow-auto uk-box-shadow-medium uk-border-rounded">
+        <table class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-margin-remove">
+            <thead>
+                <tr>
+                    <th class="uk-table-shrink uk-padding-small">Foto</th>
+                    <th>Nome Completo</th>
+                    <th>E-mail Corporativo</th>
+                    <th>Telefone Celular</th>
+                    <th>Nível de Permissão (Perfil)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var usuario in Model)
+                    {
+                        <tr>
+                            <td class="uk-padding-small">
+                                @if (!string.IsNullOrEmpty(usuario.FotoUsuario) && usuario.FotoUsuario != "default-avatar.png")
+                                {
+                                    <img class="uk-border-circle" src="~/uploads/@usuario.FotoUsuario" width="40" height="40" alt="Foto de @usuario.NomeCompleto" style="object-fit: cover; width: 40px; height: 40px;" />
+                                }
+                                else
+                                {
+                                    <div class="uk-border-circle uk-background-muted uk-flex uk-flex-center uk-flex-middle" style="width: 40px; height: 40px;">
+                                        <span uk-icon="icon: user; ratio: 1.1" class="uk-text-muted"></span>
+                                    </div>
+                                }
+                            </td>
+                            <td class="uk-text-bold">@usuario.NomeCompleto</td>
+                            <td><a href="mailto:@usuario.Email" class="uk-link-text">@usuario.Email</a></td>
+                            <td>@usuario.TelefoneCelular</td>
+                            <td>
+                                <span class="uk-label @(usuario.IsGestor ? "uk-label-danger" : "uk-label-success")" style="border-radius: 50px; padding: 2px 14px; font-weight: bold;">
+                                    @(usuario.IsGestor ? "Gestor" : "Subordinado")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="uk-text-center uk-text-muted uk-padding-large">
+                            Nenhum usuário localizado no banco de dados.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

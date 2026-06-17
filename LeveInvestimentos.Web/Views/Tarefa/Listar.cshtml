@@ -1,0 +1,78 @@
+@model IEnumerable<LeveInvestimentos.Core.Entities.Tarefa>
+
+@{
+    ViewData["Title"] = "Andamento das Tarefas";
+}
+
+<div class="uk-container uk-margin-top uk-animation-fade">
+    <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
+        <div>
+            <h2 class="uk-heading-bullet">Andamento das Tarefas</h2>
+            <p class="uk-text-muted uk-margin-remove-top">Acompanhe o status e os prazos das atividades atribuídas.</p>
+        </div>
+        @if (User.FindFirst("IsGestor")?.Value == "True")
+        {
+            <a asp-action="Agendar" class="uk-button uk-button-primary uk-box-shadow-small uk-border-rounded">
+                <span uk-icon="icon: plus"></span> Nova Tarefa
+            </a>
+        }
+    </div>
+
+    <div class="uk-card uk-card-default uk-card-body uk-padding-remove uk-overflow-auto uk-box-shadow-medium uk-border-rounded">
+        <table class="uk-table uk-table-striped uk-table-hover uk-table-middle uk-margin-remove">
+            <thead>
+                <tr>
+                    <th class="uk-padding-small">Descrição da Tarefa</th>
+                    <th>Data Limite</th>
+                    <th>Status</th>
+                    <th>Responsável</th>
+                    @if (User.FindFirst("IsGestor")?.Value == "True")
+                    {
+                        <th class="uk-text-center">Ações</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var tarefa in Model)
+                    {
+                        <tr>
+                            <td class="uk-padding-small uk-text-break">@tarefa.MensagemDescritiva</td>
+                            <td>@tarefa.DataLimite.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <span class="uk-label @(tarefa.StatusTarefa == "Concluída" ? "uk-label-success" : (tarefa.StatusTarefa == "Em Andamento" ? "uk-label-primary" : "uk-label-warning"))" style="border-radius: 50px;">
+                                    @tarefa.StatusTarefa
+                                </span>
+                            </td>
+                            <td class="uk-text-bold uk-text-primary">
+                                @(tarefa.Subordinado?.NomeCompleto ?? "Não atribuído")
+                            </td>
+                            
+                            @if (User.FindFirst("IsGestor")?.Value == "True")
+                            {
+                                <td class="uk-text-center">
+                                    <div class="uk-flex uk-flex-center">
+                                        <a asp-action="Editar" asp-route-id="@tarefa.Id" class="uk-icon-button uk-margin-small-right uk-text-primary" uk-icon="pencil" title="Editar Tarefa"></a>
+                                        
+                                        <form asp-action="Deletar" asp-route-id="@tarefa.Id" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa de forma definitiva?');">
+                                            <button type="submit" class="uk-icon-button uk-text-danger" uk-icon="trash" title="Deletar" style="border: none; cursor: pointer;"></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="uk-text-center uk-text-muted uk-padding-large">
+                            <span uk-icon="icon: info; ratio: 1.2"></span> Nenhuma tarefa agendada no sistema.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

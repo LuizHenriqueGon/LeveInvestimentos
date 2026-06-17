@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Página Inicial";
+}
+
+<div class="uk-container uk-margin-top uk-animation-fade">
+    <div class="uk-card uk-card-default uk-card-body uk-box-shadow-medium">
+        <h1 class="uk-heading-bullet">Bem-vindo(a) ao Leve Investimentos</h1>
+        <p class="uk-text-lead">Sistema de Gestão e Agendamento de Tarefas.</p>
+        
+        <hr class="uk-divider-icon">
+        
+        <div class="uk-child-width-1-2@m uk-grid-match" uk-grid>
+            <div>
+                <div class="uk-card uk-card-primary uk-card-hover uk-card-body uk-light">
+                    <h3 class="uk-card-title"><span uk-icon="icon: list; ratio: 1.5"></span> Minhas Tarefas</h3>
+                    <p>Acompanhe o andamento das tarefas cadastradas no sistema.</p>
+                    <a asp-controller="Tarefa" asp-action="Listar" class="uk-button uk-button-default">Acessar</a>
+                </div>
+            </div>
+            
+            @if (User.FindFirst("IsGestor")?.Value == "True")
+            {
+                <div>
+                    <div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light">
+                        <h3 class="uk-card-title"><span uk-icon="icon: users; ratio: 1.5"></span> Equipe</h3>
+                        <p>Gerencie subordinados e cadastre novos usuários.</p>
+                        <a asp-controller="Usuario" asp-action="Cadastrar" class="uk-button uk-button-default">Novo Usuário</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
